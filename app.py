@@ -1,4 +1,3 @@
-from threading import current_thread
 from flask import Flask, render_template, request, redirect, url_for, session
 import pymongo
 import bcrypt
@@ -100,7 +99,7 @@ def login():
     return render_template('login.html', message=message)
 
 
-@app.route("/logout")
+@app.route("/logout", methods=['GET', 'POST'])
 def logout():
     if "email" in session:
         session.pop("email", None)
