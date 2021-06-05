@@ -113,3 +113,5 @@ def after_request(response):
 
 
 #TODO: clear back stack when on dashboard
+
+app.run()
