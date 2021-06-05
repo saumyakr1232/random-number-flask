@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 
 app.secret_key = "testing"
-client = pymongo.MongoClient("mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false")
+client = pymongo.MongoClient("mongodb+srv://admin:Jt7ahFBbfBVPfUz@cluster0.wsaho.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 db = client.get_database('randomnumber')
 
 records = db.register
