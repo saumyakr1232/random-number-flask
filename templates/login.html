@@ -1,0 +1,39 @@
+
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Random Number</title>
+{% endblock %}
+
+{% block body %}
+
+    
+
+    <div class="card-wrapper">
+        <div class="card">
+            <h1 class="center">Login</h1>
+
+            <form name="signup_form" action="" method="post">
+                <label for="name">Email</label>
+                <input type="email" name="email" class="field" required>
+                
+                <label for="name">Password</label>
+                <input type="password" name="password" class="field" required>
+               
+                {% if message %}
+                <p class="error">{{message}}</p>
+                {% endif %}
+               
+                <input type="submit" value="Login" class="btn">
+                
+
+
+            </form>
+
+            <a href="/signup" class="auth_url">Not a user? Sign Up.</a>
+
+        
+        </div>
+    </div>
+
+{% endblock %}
