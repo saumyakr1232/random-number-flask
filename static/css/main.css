@@ -10,12 +10,16 @@ table, td, th {
 table {
     border-collapse: collapse;
     width: 100%;
+    table-layout: fixed;
 }
 
 th {
-    height: 30px;
-}
-
+    height: auto;
+    overflow-x:auto;
+    padding: 3px;
+    font-size: medium;
+    text-transform: uppercase;
+}   
 
 
 .form {
@@ -29,7 +33,6 @@ th {
 body {
     background-color:rgb(37, 37, 37);
     color: aliceblue;
-    padding: 2rem;
     margin: 0;
     font-family: 'Architects Daughter', cursive;
     font-size: 12px;
@@ -44,7 +47,7 @@ td {
     font-family: 'Architects Daughter', cursive;
     font-size: 1.0rem;
     text-align: center;
-    padding: 5px;
+    padding: 4px;
 }
 .button {
     border: none;
@@ -56,7 +59,7 @@ td {
     font-size: 12px;
     cursor: pointer;
     font-weight: bold;
-    margin-left: 4px;
+    /* margin-left: 4px; */
 }
 .input {
     background-color: cornflowerblue;

@@ -21,7 +21,7 @@ def home():
         return redirect('/dashboard')
     return redirect('/login')
 
-@app.route('/dashboard', methods=['POST', 'GET'])
+@app.route('/dashboard', methods=['POST','GET'])
 def dashboard():
     modified_items = []
     number = 0
