@@ -23,26 +23,25 @@ def home():
 
 @app.route('/dashboard', methods=['POST', 'GET'])
 def dashboard():
-    items = usersdata.find().sort('date',direction=-1)
-    
+    modified_items = []
+    number = 0
     if request.method == "POST":
         if "email" not in session:
             return redirect('/')
-        random_number = random.randint(1, 1000)
+        random_number = random.randint(1, 10)
         email = session['email']
         current_user = records.find_one({'email': email})
         date = datetime.utcnow()
         new_item = {"number": random_number, "user_id": current_user['_id'], "date":date.strftime(r"%m/%d/%Y, %H:%M:%S") }
         usersdata.insert(new_item)
-        return redirect('/')
-    else:
-        modified_items= []
+        items = usersdata.find({'number': random_number}).sort('date',direction=-1)
         for item in items:
             user = records.find_one({'_id': item['user_id']})
             item['name'] = user['name']
             modified_items.append(item)
         number = modified_items[0]['number'] if len(modified_items) != 0 else 0
-        return render_template('dashboard.html',items=modified_items, number=number)
+        
+    return render_template('dashboard.html',items=modified_items, number=number)
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -115,4 +114,4 @@ def after_request(response):
 #TODO: clear back stack when on dashboard
 
 if __name__ == '__main__':
-    app.run(threaded=True, port=5000)
+    app.run(debug=True)
