@@ -14,9 +14,9 @@
 
 
     <div class="content">
-        <h1>8</h1>
+        <h1>{{number}}</h1>
 
-        <form action="/" method="POST">
+        <form action="/dashboard" method="POST">
             <input type="submit" value="Random No" class="button">
         </form>
 
@@ -26,8 +26,14 @@
                 <th>User ID</th>
                 <th>Number</th>
                 <th>Added</th>
-
-
+            </tr>
+            {% for item in items %}
+                <tr>
+                    <td>{{ item['name'] }}</td>
+                    <td>{{ item['number'] }}</td>
+                    <td>{{ item.get('date',None) }}</td>
+                </tr>
+            {% endfor %}
         </table>
         <br>
         <br>

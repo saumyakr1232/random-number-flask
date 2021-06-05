@@ -1,7 +1,9 @@
+from threading import current_thread
 from flask import Flask, render_template, request, redirect, url_for, session
 import pymongo
 import bcrypt
 import random
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -12,29 +14,41 @@ db = client.get_database('randomnumber')
 
 records = db.register
 
-items = db.items
+usersdata = db.usersdata
 
 @app.route('/', methods=['POST','GET'])
 def home():
-    print("Home")
-    print(session)
     if "email" in session:
         return redirect('/dashboard')
     return redirect('/login')
 
-@app.route('/dashboard')
+@app.route('/dashboard', methods=['POST', 'GET'])
 def dashboard():
+    items = usersdata.find().sort('date',direction=-1)
+    
     if request.method == "POST":
-        random_number = random.randint(1, 1000000)
-        print(session['email'])
-        new_item = {"number": random_number, "user_id": "" }
-        print(new_item)
-    return render_template('dashboard.html', )
+        if "email" not in session:
+            return redirect('/')
+        random_number = random.randint(1, 1000)
+        email = session['email']
+        current_user = records.find_one({'email': email})
+        date = datetime.utcnow()
+        new_item = {"number": random_number, "user_id": current_user['_id'], "date":date.strftime(r"%m/%d/%Y, %H:%M:%S") }
+        usersdata.insert(new_item)
+        return redirect('/')
+    else:
+        modified_items= []
+        for item in items:
+            user = records.find_one({'_id': item['user_id']})
+            item['name'] = user['name']
+            modified_items.append(item)
+        number = modified_items[0]['number'] if len(modified_items) != 0 else 0
+        return render_template('dashboard.html',items=modified_items, number=number)
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if "email" in session:
-        return redirect('/dashboard')
+        return redirect('/')
     if request.method == "POST":
         user = request.form.get("name")
         email = request.form.get("email")
@@ -50,9 +64,9 @@ def signup():
         else:
             hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
             user_input = {'name':user, 'email': email, 'password': hashed}
-
+            session["email"] = email
             records.insert_one(user_input)
-            return redirect('/dashboard')
+            return redirect('/')
 
     return render_template('signup.html')
 
@@ -62,7 +76,7 @@ def signup():
 def login():
     message = ""
     if "email" in session:
-        return redirect('/dashboard')
+        return redirect('/')
     if request.method == "POST":
         email = request.form.get("email")
         password = request.form.get("password")
@@ -73,11 +87,11 @@ def login():
             
             if bcrypt.checkpw(password.encode('utf-8'), passwordcheck):
                 session["email"] = email_val
-                return redirect('/dashboard')
+                return redirect('/')
 
             else:
                 if "email" in session:
-                    return redirect('/dashboard')
+                    return redirect('/')
                 message = 'Wrong password'
                 return render_template('login.html', message=message)
         else:
@@ -89,8 +103,14 @@ def login():
 @app.route("/logout")
 def logout():
     if "email" in session:
-        print("email in session")
-        print(session)
         session.pop("email", None)
-        print("after logout", session)
     return redirect('/')
+
+
+@app.after_request
+def after_request(response):
+    response.headers.add('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0') 
+    return response
+
+
+#TODO: clear back stack when on dashboard
